@@ -471,15 +471,16 @@ $$
 
 st.markdown('''
 ### List of issues
-- Sac flies can be pretty harsh to fielders. The baserunner sub model doesn't account for who the runner is,
-it just assumes they're average, so there are cases where a fast runner is on 3rd and the fielder really has 
-no shot where the model dings the fielder unfairly.
-- I've noticed sometimes when a play challenged the WPA is incorrectly 0, which I hypothesize is because the 
-"next event" in the game log was the challenge event and not the actual next play.
-- Naturally this includes the _whole_ play, and not just what the fielder can control. Rafaela has
-a play where he misses a ball, commits a throwing error, but then Marcelo Mayer gets the ball
-and _also_ commits a throwing error. Ceddanne is considered the responsible fielder for the
-whole play. Tough look for him but splitting up plays into sub-events is beyond the scope of this
-little website.
+- Sac flies can be pretty harsh. The baserunner sub model doesn't account for who the runner is,
+it just assumes they're average, so there are cases where a fast runner is on 3rd and the fielder has 
+no shot but the model dings the fielder unfairly because it doesn't know.
+- I've noticed sometimes when a play is challenged the WPA is incorrectly 0, which I hypothesize is because the 
+"next event" in the game log was the challenge event and not the actual next play. Hopefully an easy fix.
+- Other players fucking up hurts the "responsible fielder." The final win probability for a play includes 
+the _whole_ play, and not just what the fielder can control. Rafaela has a play where he misses a ball & 
+commits a throwing error, not good but it wasn't disasterous, but then Marcelo Mayer gets the ball and _also_ 
+commits a throwing error allowing a run to score. Ceddanne is considered the responsible fielder for the
+whole play so all the negative stuff celo did is given to him. Tough for him but splitting up plays into 
+sub-events is beyond the scope of this little website.
 ''')
 
