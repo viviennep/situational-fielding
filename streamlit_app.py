@@ -471,10 +471,6 @@ $$
 
 st.markdown('''
 ### List of issues
-- Extra innings can be weird. I have fixed 2 issues with extras already but some weird plays remain.  
-PCA's most valuable play at the moment is a 99% routine pop up in the 11th where the xWPA is -18%. The
-rest of his most valuable plays look normal, but this is an obvious outlier.  
-Similarly, Fernando Tatis Jr gets 3 huge plays for catching routine pop outs in bot 9 and bot 10.
 - Sac flies can be pretty harsh to fielders. The baserunner sub model doesn't account for who the runner is,
 it just assumes they're average, so there are cases where a fast runner is on 3rd and the fielder really has 
 no shot where the model dings the fielder unfairly.
