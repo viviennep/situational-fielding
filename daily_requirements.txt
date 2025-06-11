@@ -1,0 +1,11 @@
+polars
+numpy
+requests
+matplotlib
+duckdb
+json
+pickle
+catboost
+pybaseball
+
+

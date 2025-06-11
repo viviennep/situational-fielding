@@ -1,0 +1,41 @@
+name: Daily Update
+
+on:
+  schedule:
+    - cron: '0 13 * * *'
+  workflow_dispatch:     
+
+jobs:
+  rebuild-db:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r daily_requirements.txt
+
+      - name: Run DB update script
+        run: python daily_update.py
+
+      - name: Commit & push updated DB
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "daily database update"
+          git push origin main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
