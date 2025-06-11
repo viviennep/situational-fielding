@@ -1,5 +1,8 @@
 name: Daily Update
 
+permissions:
+  contents: write
+
 on:
   schedule:
     - cron: '0 13 * * *'
