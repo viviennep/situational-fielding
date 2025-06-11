@@ -1,0 +1,7 @@
+streamlit
+polars
+numpy
+requests
+matplotlib
+duckdb
+
