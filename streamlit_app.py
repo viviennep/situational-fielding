@@ -6,6 +6,14 @@ cl = pl.col
 data_dir = pathlib.Path(__file__).resolve().parent / 'data'
 
 con = duckdb.connect(data_dir / 'leaderboard.duckdb')
+
+con.execute(f"""
+    create or replace table all_plays as
+    select *
+    from read_parquet('{data_dir}/daily_data/*/*/*.parquet',
+                      hive_partitioning=True);
+""")
+
 last_date = con.query(f"""
         select distinct game_date
         from all_plays
