@@ -7,13 +7,6 @@ data_dir = pathlib.Path(__file__).resolve().parent / 'data'
 
 con = duckdb.connect(data_dir / 'leaderboard.duckdb')
 
-con.execute(f"""
-    create or replace view all_plays as
-    select *
-    from read_parquet('data/daily_data/*/*/*.parquet',
-                      hive_partitioning=True);
-""")
-
 last_date = con.query(f"""
         select distinct game_date
         from all_plays
@@ -261,16 +254,19 @@ else:
                  'sortable': False,},
                 {'field': 'inning', 
                  'headerName': 'Inn', 
+                 'minWidth': 40, 
                  'maxWidth': 40, 
                  'filter': False, 
                  'sortable': True,},
                 {'field': 'inning_topbot', 
                  'headerName': 'Half', 
+                 'minWidth': 40, 
                  'maxWidth': 40, 
                  'filter': False, 
                  'sortable': False,},
                 {'field': 'outs_when_up', 
                  'headerName': 'Outs', 
+                 'minWidth': 40, 
                  'maxWidth': 50, 
                  'filter': False, 
                  'sortable': False,},
