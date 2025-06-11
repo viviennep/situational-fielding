@@ -4,4 +4,6 @@ numpy
 requests
 matplotlib
 duckdb
+plotly
+st_aggrid 
 
