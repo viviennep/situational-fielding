@@ -474,6 +474,9 @@ st.markdown('''
 - Sac flies can be pretty harsh. The baserunner sub model doesn't account for who the runner is,
 it just assumes they're average, so there are cases where a fast runner is on 3rd and the fielder has 
 no shot but the model dings the fielder unfairly because it doesn't know.
+- Something weird is going on with plays which end the bottom of the 9th. Routine plays which end the game
+are given huge expected win prob swings in the wrong direction. I had to fix a similar bug with extra innings 
+and expected this to get fixed as well but I guess not. 
 - I've noticed sometimes when a play is challenged the WPA is incorrectly 0, which I hypothesize is because the 
 "next event" in the game log was the challenge event and not the actual next play. Hopefully an easy fix.
 - Other players fucking up hurts the "responsible fielder." The final win probability for a play includes 
