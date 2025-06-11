@@ -68,15 +68,13 @@ columnDefs = [
          'maxWidth': 70, 
          'filter': False, 
          'sortable': False, 
-         'pinned': 'left',
          'valueGetter': JsCode("function(params) { return params.node.rowIndex + 1; }"),
          'surpressMenu': True},
         {'field': 'fielder_name', 
          'headerName': 'Name', 
          'minWidth': 120, 
          'filter': True, 
-         'sortable': False, 
-         'pinned': 'left'},
+         'sortable': False},
         {'field': 'season', 
          'headerName': 'Season', 
          'minWidth':  70, 
@@ -172,6 +170,38 @@ return_value = AgGrid(lb[year_filt & team_filt],
        key=None,
        custom_css=css)
 
+@st.cache_data(show_spinner=False)
+def selected_players_query(sps):
+    return con.query(f"""
+                       select 
+                           resp_fielder_name as name,
+                           game_date,
+                           des,
+                           home_team,
+                           away_team,
+                           inning,
+                           inning_topbot,
+                           outs_when_up,
+                           base_state,
+                           run_diff,
+                           out_prob,
+                           catch_rate,
+                           is_out,
+                           li,
+                           wp,
+                           next_wp,
+                           wpa,
+                           xwpa,
+                           wpoe,
+                           wpoeli,
+                           play_id
+                       from all_plays
+                       where is_of_play
+                       and (resp_fielder_name, game_year) in (
+                       {','.join(f"('{i[0]}',{i[1]})" for i in sps)}
+                       );
+                 """).df()
+
 st.markdown('''
 #### Selected Players Plays
 ''')
@@ -179,35 +209,7 @@ if return_value.selected_rows is None:
     st.write('''Select rows in the table to see individual plays from the selected players''')
 else:
     selected_player_seasons = return_value.selected_rows[['fielder_name','season']].to_numpy()
-    selected_player_plays = con.query(f"""
-                                        select 
-                                            resp_fielder_name as name,
-                                            game_date,
-                                            des,
-                                            home_team,
-                                            away_team,
-                                            inning,
-                                            inning_topbot,
-                                            outs_when_up,
-                                            base_state,
-                                            run_diff,
-                                            out_prob,
-                                            catch_rate,
-                                            is_out,
-                                            li,
-                                            wp,
-                                            next_wp,
-                                            wpa,
-                                            xwpa,
-                                            wpoe,
-                                            wpoeli,
-                                            play_id
-                                        from all_plays
-                                        where is_of_play
-                                        and (resp_fielder_name, game_year) in (
-                                        {','.join(f"('{i[0]}',{i[1]})" for i in selected_player_seasons)}
-                                        );
-                                    """).df()
+    selected_player_plays = selected_players_query(selected_player_seasons)
     sporty_vid = lambda x: f"https://baseballsavant.mlb.com/sporty-videos?playId={x}"
     selected_player_plays['video_link'] = selected_player_plays['play_id'].apply(sporty_vid)
     selected_player_plays['date'] = selected_player_plays['game_date'].dt.strftime('%Y-%m-%d')
@@ -231,8 +233,7 @@ else:
              'headerName': 'Name', 
              'minWidth': 70, 
              'filter': True, 
-             'sortable': False, 
-             'pinned': 'left'},
+             'sortable': False, },
             {'field': 'date', 
              'headerName': 'Date', 
              'minWidth':  80, 
@@ -312,18 +313,18 @@ else:
              'headerTooltip': "Catch Probabilities on the Play",
              'children': [
                 # just for debugging
-                {'field': 'wp', 
-                 'headerName': 'Win Probability', 
-                 'minWidth':  95, 
-                 'type' : ['numericColumn', 'customNumericFormat'], 'precision': 2,
-                 'filter': True, 
-                 'sortable': True,},
-                {'field': 'next_wp', 
-                 'headerName': 'Next Win Probability', 
-                 'minWidth':  95, 
-                 'type' : ['numericColumn', 'customNumericFormat'], 'precision': 2,
-                 'filter': True, 
-                 'sortable': True,},
+                #{'field': 'wp', 
+                # 'headerName': 'Win Probability', 
+                # 'minWidth':  95, 
+                # 'type' : ['numericColumn', 'customNumericFormat'], 'precision': 2,
+                # 'filter': True, 
+                # 'sortable': True,},
+                #{'field': 'next_wp', 
+                # 'headerName': 'Next Win Probability', 
+                # 'minWidth':  95, 
+                # 'type' : ['numericColumn', 'customNumericFormat'], 'precision': 2,
+                # 'filter': True, 
+                # 'sortable': True,},
                 {'field': 'wpa', 
                  'headerName': 'Win Probability Added', 
                  'minWidth':  95, 
