@@ -112,13 +112,13 @@ columnDefs = [
          'headerTooltip': "Outs made compared to expected outs made",
          'children': [
               {'field': 'vioaa', 
-               'headerName': 'Outs Above Average (viv)',
+               'headerName': '(viv) Outs Above Average',
                'minWidth': 130,
                'type' : ['numericColumn', 'customNumericFormat'], 'precision': 2,
                'headerTooltip': "My Outs Above Average",
                'tooltipValueGetter': JsCode("""function(){return "My Outs Above Average"}""")},
               {'field': 'scoaa', 
-               'headerName': 'Outs Above Average (statcast)',
+               'headerName': '(sc) Outs Above Average',
                'minWidth': 130,
                'type' : ['numericColumn', 'customNumericFormat'], 'precision': 2,
                'headerTooltip': "Statcast Outs Above Average",
@@ -482,5 +482,8 @@ commits a throwing error, not good but it wasn't disasterous, but then Marcelo M
 commits a throwing error allowing a run to score. Ceddanne is considered the responsible fielder for the
 whole play so all the negative stuff celo did is given to him. Tough for him but splitting up plays into 
 sub-events is beyond the scope of this little website.
+- The batted ball outcome model is very simplistic and isn't told which park the ball was hit in. Therefore,
+balls which are easy to catch in a deep park like Coors or Fenway RF, but gone in a good chunk of the other parks
+will give a slight boost to the fielder. This issue is muted by the high out probability.
 ''')
 
