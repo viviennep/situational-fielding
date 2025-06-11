@@ -49,7 +49,7 @@ you hover over it. This lets you, for example, limit the table to only select ce
 
 @st.cache_data(show_spinner=False)
 def load_leaderboard():
-    return con.execute('select * from leaderboard').df()
+    return con.execute('select * from leaderboard order by wpoeli desc').df()
 
 lb = load_leaderboard()
 lb['rank'] = None
