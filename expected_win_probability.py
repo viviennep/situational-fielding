@@ -43,9 +43,9 @@ def xwp_given_outcome(inn,half,outs,base,rdiff,outcome,br_X,base_adv,wp_table):
                 new_rdiff = rdiff - runs if half==0 else rdiff + runs
                 new_inn   = inn+1 if new_outs>2 and half>0 else inn
                 new_inn   = min(new_inn,9)
-                new_half  = 1-half if new_outs>2 else half
-                new_outs  = new_outs if new_outs<3 else 0
+                new_half  = half if new_outs<3 else 1-half
                 new_base  = new_base if new_outs<3 else (2 if new_inn==9 else 0)
+                new_outs  = new_outs if new_outs<3 else 0
                 new_wp = wp_table[new_inn,new_half,new_base,new_outs,new_rdiff+max_rdiff]
                 xwp += prob*new_wp
     return xwp
@@ -71,3 +71,4 @@ def row_wise_xwp(row, base_adv, wp_table):
     xwp += p_hr*xwp_of_outcome('home_run')
     print(rwxwp_count,inn,half,outs,base,rdiff,xwp)
     return xwp
+
