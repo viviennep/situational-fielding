@@ -186,9 +186,9 @@ df.write_parquet(f"{data_dir}/daily_data/",
 
 con = duckdb.connect(data_dir / 'leaderboard.duckdb')
 con.execute(f"""
-    create or replace table all_plays as
+    create or replace view all_plays as
     select *
-    from read_parquet('{data_dir}/daily_data/*/*/*.parquet',
+    from read_parquet('data/daily_data/*/*/*.parquet',
                       hive_partitioning=True);
 """)
 
