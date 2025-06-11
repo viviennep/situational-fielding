@@ -41,6 +41,10 @@ def xwp_given_outcome(inn,half,outs,base,rdiff,outcome,br_X,base_adv,wp_table):
                                                              adv_codes=tuple(i for i in (aL, aT, aT2)
                                                                              if i is not None))
                 new_rdiff = rdiff - runs if half==0 else rdiff + runs
+                if (inn>=8 and half==1 and new_outs>2) and new_rdiff!=0:
+                    new_wp = 1. if new_rdiff>0 else 0.
+                    xwp += prob*new_wp
+                    continue
                 new_inn   = inn+1 if new_outs>2 and half>0 else inn
                 new_inn   = min(new_inn,9)
                 new_half  = half if new_outs<3 else 1-half
@@ -69,6 +73,6 @@ def row_wise_xwp(row, base_adv, wp_table):
     xwp += p_2b*xwp_of_outcome('double')
     xwp += p_3b*xwp_of_outcome('triple')
     xwp += p_hr*xwp_of_outcome('home_run')
-    print(rwxwp_count,inn,half,outs,base,rdiff,xwp)
+    print(rwxwp_count, inn, half, outs, base, rdiff, xwp)
     return xwp
 

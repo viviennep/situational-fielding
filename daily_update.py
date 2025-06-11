@@ -139,7 +139,7 @@ base_adv = CatBoostClassifier().load_model(model_dir / 'baserunner-advancement.c
 wp_table = np.load(table_dir / 'p(win|inn,half,base,out,rdiff).npy')
 
 # get p(bip outcome | theta, ev, la, hit)
-X = df.select('theta','launch_speed','launch_angle').collect().to_numpy()
+X = df.select('home_team','theta','launch_speed','launch_angle').collect().to_numpy()
 pred_outcome = outcome_given_hit.predict_proba(X)
 
 # do OF plays first
