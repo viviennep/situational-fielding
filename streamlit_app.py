@@ -272,6 +272,7 @@ else:
                  'sortable': False,},
                 {'field': 'base_state', 
                  'headerName': 'Base State', 
+                 'minWidth': 40, 
                  'maxWidth': 50, 
                  'filter': False, 
                  'sortable': False,},
