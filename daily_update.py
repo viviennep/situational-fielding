@@ -6,9 +6,9 @@ from data_scripts.player_info import get_player_bios
 from data_scripts.wall import calc_wall_properties
 from expected_win_probability import row_wise_xwp
 cl = pl.col
-data_dir = pathlib.Path(__file__).resolve().parent / 'data'
-table_dir = pathlib.Path(__file__).resolve().parent / 'tables'
-model_dir = pathlib.Path(__file__).resolve().parent / 'models'
+data_dir = pathlib.Path('data')
+table_dir = pathlib.Path('tables')
+model_dir = pathlib.Path('models')
 
 # base state to int mapper
 bit_mapper = {'---': 0b000,
