@@ -1,6 +1,4 @@
-import streamlit as st, numpy as np, polars as pl, plotly.express as px, duckdb, pathlib
-import plotly.graph_objects as go
-import plotly.figure_factory as ff
+import streamlit as st, numpy as np, polars as pl, duckdb, pathlib
 from st_aggrid import AgGrid
 from st_aggrid.grid_options_builder import GridOptionsBuilder
 from st_aggrid.shared import GridUpdateMode, JsCode
