@@ -5,4 +5,4 @@ remake-database.py
 .*
 !.gitignore
 !/.git/
-
+__*
