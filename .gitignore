@@ -6,3 +6,4 @@ remake-database.py
 !.gitignore
 !/.git/
 __*
+*.swp
