@@ -18,7 +18,7 @@ wp_table = np.load(table_dir / 'p(win|inn,half,base,out,rdiff).npy')
 
 df = pl.read_parquet('data/daily_data/',hive_partitioning=True)
 
-X = df.select('home_team','theta','launch_speed','launch_angle').to_numpy()
+X = df.select('home_team','hc_dist','theta','launch_speed','launch_angle').to_numpy()
 pred_outcome = outcome_given_hit.predict_proba(X)
 
 df = df.with_columns(**dict(zip(['p_1b','p_2b','p_3b','p_hr'],pred_outcome.T)))

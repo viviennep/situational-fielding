@@ -2,4 +2,7 @@ data/*.parquet
 single-play-of-catch-prob-for-warmonger-requests.py
 remake-database.py
 !data/fences-lidar.parquet
+.*
+!.gitignore
+!/.git/
 
