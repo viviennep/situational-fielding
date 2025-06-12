@@ -36,6 +36,13 @@ experiments. It compares what the player did to all the things he could've done,
 in not just 2 worlds but all the possible worlds, and grades him on how much better 
 or worse he did than expected.
 
+This stat does this through the lens of win probability. Once the ball is off the bat and 
+in the air it looks at where the ball is headed & how hard it's heading there, using that to
+determine how the fielding team's win probability is expected to change by considering all 
+the possible ways the game could change and how likely those changes are. One of those games 
+changes is what actually happens, and the fielder is credited or debited with how much better 
+or worse their team's actual win probability ended up compared to the expectation.
+
 _Last updated: {last_date.strftime('%m-%d-%Y')}_
 
 ''')
