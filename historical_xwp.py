@@ -1,4 +1,5 @@
-import numpy as np, polars as pl, pickle as pkl, pathlib, duckdb
+from model_scripts import double_catch_prob
+import numpy as np, polars as pl, pickle as pkl, pathlib, duckdb, cloudpickle as cpkl
 from catboost import CatBoostClassifier
 from functools import lru_cache
 from utils import transition_mapper
@@ -19,7 +20,7 @@ with open(model_dir / 'outcome-given-hit.pkl','rb') as f:
 
 # OF catch prob model
 with open(model_dir / 'catch-prob.pkl','rb') as f: 
-    catch_prob = pkl.load(f)
+    catch_prob = cpkl.load(f)
 
 # IF out prob model
 with open(model_dir / 'out-prob.pkl','rb') as f: 
@@ -37,8 +38,12 @@ pred_outcome = outcome_given_hit.predict_proba(X)
 
 # do OF plays first
 of_play = df.filter(cl('is_of_play'))
-of_features = ['dist','angle','hang_time','wall_dist_start',
-               'wall_dist_land','wall_dist_ball_dir','wall_min_dist','wall_height']
+of_play = of_play.with_columns(wall_ball=(cl('wall_dist_hit')-cl('hit_dist')<0))
+of_features = ['dist','hang_time',
+               'sin_theta','cos_theta',
+               'wall_dist_land','wall_min_dist',
+               'wall_height','wall_height_hit',
+               'hit_dist','wall_ball']
 X = of_play.select(of_features).collect().to_numpy()
 of_play = of_play.with_columns(out_prob = catch_prob.predict_proba(X)[:,-1])
 df = df.join(of_play.select('play_id','out_prob'),on='play_id',how='left')

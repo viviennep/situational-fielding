@@ -39,7 +39,20 @@ li_df     = pl.scan_parquet(f'{table_dir}/leverage-index.parquet') # get leverag
 
 # make the df lazy for some speedups
 df = df.lazy()
-
+df = (df.with_columns(game_date=cl('game_date').dt.date(),
+                      fielder_name=cl('name_display_first_last'),
+                      resp_fielder = pl.when(cl('pos').is_null())
+                                       .then(pl.concat_list(cl('des').str.find(p) for p in positions).list.arg_min())
+                                       .otherwise('pos'),
+                      is_out = cl('events').is_in(outs),
+                      is_of_play = cl('start_pos_x').is_not_null(),
+                      inn_ind = (cl('inning')-1).clip(0,9),
+                      half_ind = (1-cl('inning_topbot').eq('Top')).cast(pl.Int64),
+                      run_diff = cl('home_score')-cl('away_score'),
+                      hc_x_ft = 2.495671*( cl('hc_x')-125.42),
+                      hc_y_ft = 2.495671*(-cl('hc_y')+198.27),
+                      base_state = pl.when(cl('on_1b').is_not_null()).then(pl.lit('1')).otherwise(pl.lit('-')) +
+                                   pl.when(cl('on_2b').is_not_null()).then(pl.lit('1')).otherwise(pl.lit('-')) +
 # grab all player ids in the sc_df and load their bio info (just need names)
 playerids = np.unique(df.select(*(cl(f'fielder_{i}') for i in range(2,10)),'batter','pitcher').collect().to_numpy())
 player_df = get_player_bios(playerids)
@@ -106,6 +119,9 @@ df = (df.with_columns(game_date=cl('game_date').dt.date(),
                                   .when((cl('post_home_score')-cl('post_away_score'))>0).then(pl.lit(1.))
                                   .when((cl('post_home_score')-cl('post_away_score'))<0).then(pl.lit(0.))
                                   .otherwise(cl('wp').round())) # final otherwise only triggers in 1 instance: walk off balk
+        .with_columns(sin_theta = cl('angle').radians().sin(),
+                      cos_theta = cl('angle').radians().cos(),
+                      wall_ball = (cl('wall_dist_hit')-cl('hit_dist')<0))
         .select('play_id','game_date','game_year','home_team','away_team','fld_team','game_pk',
                 'inning','inning_topbot','outs_when_up','base_state','run_diff','balls','strikes',
                 'inn_ind','half_ind','base_cd','wp','li','next_wp','is_of_play','is_out',
@@ -117,8 +133,9 @@ df = (df.with_columns(game_date=cl('game_date').dt.date(),
                 'fielder_7','fielder_8','fielder_9','if_fielding_alignment',
                 'resp_fielder','resp_fielder_id','resp_fielder_name','resp_fielder_bday',
                 'post_home_score','post_away_score','post_bat_score','post_fld_score',
-                'catch_rate', 'angle', 'dist', 'wall_dist_start', 'wall_dist_land', 
-                'wall_dist_ball_dir', 'wall_min_dist', 'wall_height'))
+                'catch_rate', 'angle', 'sin_theta', 'cos_theta', 'dist', 'wall_dist_start', 
+                'wall_dist_land', 'wall_dist_ball_dir', 'wall_min_dist', 'wall_height', 
+                'wall_dist_hit', 'wall_height_hit','hit_dist','wall_ball'))
 
 # load in the models
 with open(model_dir / 'outcome-given-hit.pkl','rb') as f: 
@@ -144,8 +161,11 @@ pred_outcome = outcome_given_hit.predict_proba(X)
 
 # do OF plays first
 of_play = df.filter(cl('is_of_play'))
-of_features = ['dist','angle','hang_time','wall_dist_start',
-               'wall_dist_land','wall_dist_ball_dir','wall_min_dist','wall_height']
+of_features = ['dist','hang_time',
+               'sin_theta','cos_theta',
+               'wall_dist_land','wall_min_dist',
+               'wall_height','wall_height_hit',
+               'hit_dist','wall_ball']
 X = of_play.select(of_features).collect().to_numpy()
 of_play = of_play.with_columns(out_prob = catch_prob.predict_proba(X)[:,-1])
 df = df.join(of_play.select('play_id','out_prob'),on='play_id',how='left')

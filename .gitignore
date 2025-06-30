@@ -7,3 +7,4 @@ remake-database.py
 !/.git/
 __*
 *.swp
+rummaging.py
