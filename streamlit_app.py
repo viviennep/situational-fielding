@@ -245,7 +245,7 @@ else:
              'minWidth': 150, 
              'wrapText': False, 
              'tooltipField': 'des',
-             'filter': False, 
+             'filter': True, 
              'sortable': False,},
             {'headerName': "Game State",
              'headerTooltip': "State of the game at the beginning of the play",
