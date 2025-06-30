@@ -39,20 +39,7 @@ li_df     = pl.scan_parquet(f'{table_dir}/leverage-index.parquet') # get leverag
 
 # make the df lazy for some speedups
 df = df.lazy()
-df = (df.with_columns(game_date=cl('game_date').dt.date(),
-                      fielder_name=cl('name_display_first_last'),
-                      resp_fielder = pl.when(cl('pos').is_null())
-                                       .then(pl.concat_list(cl('des').str.find(p) for p in positions).list.arg_min())
-                                       .otherwise('pos'),
-                      is_out = cl('events').is_in(outs),
-                      is_of_play = cl('start_pos_x').is_not_null(),
-                      inn_ind = (cl('inning')-1).clip(0,9),
-                      half_ind = (1-cl('inning_topbot').eq('Top')).cast(pl.Int64),
-                      run_diff = cl('home_score')-cl('away_score'),
-                      hc_x_ft = 2.495671*( cl('hc_x')-125.42),
-                      hc_y_ft = 2.495671*(-cl('hc_y')+198.27),
-                      base_state = pl.when(cl('on_1b').is_not_null()).then(pl.lit('1')).otherwise(pl.lit('-')) +
-                                   pl.when(cl('on_2b').is_not_null()).then(pl.lit('1')).otherwise(pl.lit('-')) +
+
 # grab all player ids in the sc_df and load their bio info (just need names)
 playerids = np.unique(df.select(*(cl(f'fielder_{i}') for i in range(2,10)),'batter','pitcher').collect().to_numpy())
 player_df = get_player_bios(playerids)
