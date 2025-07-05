@@ -5,4 +5,5 @@ requests
 matplotlib
 duckdb
 streamlit-aggrid
+cloudpickle
 

@@ -1,4 +1,5 @@
 import numpy as np, polars as pl, requests, json, pathlib, pickle as pkl, duckdb
+import cloudpickle as cpkl
 from catboost import CatBoostClassifier
 from data_scripts.statcast import get_statcast, add_playids
 from data_scripts.outfield import retrieve_of_plays
@@ -130,7 +131,7 @@ with open(model_dir / 'outcome-given-hit.pkl','rb') as f:
 
 # OF catch prob model
 with open(model_dir / 'catch-prob.pkl','rb') as f: 
-    catch_prob = pkl.load(f)
+    catch_prob = cpkl.load(f)
 
 # IF out prob model
 with open(model_dir / 'out-prob.pkl','rb') as f: 
