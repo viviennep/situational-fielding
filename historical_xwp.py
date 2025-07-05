@@ -38,7 +38,6 @@ pred_outcome = outcome_given_hit.predict_proba(X)
 
 # do OF plays first
 of_play = df.filter(cl('is_of_play'))
-of_play = of_play.with_columns(wall_ball=(cl('wall_dist_hit')-cl('hit_dist')<0))
 of_features = ['dist','hang_time',
                'sin_theta','cos_theta',
                'wall_dist_land','wall_min_dist',
