@@ -6,5 +6,6 @@ duckdb
 catboost
 pybaseball
 scikit-learn
+cloudpickle
 
 
