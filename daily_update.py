@@ -130,8 +130,10 @@ with open(model_dir / 'outcome-given-hit.pkl','rb') as f:
     outcome_given_hit = pkl.load(f)
 
 # OF catch prob model
-with open(model_dir / 'catch-prob.pkl','rb') as f: 
-    catch_prob = cpkl.load(f)
+with (open(model_dir / 'normal-catch-prob.pkl','rb') as normal,
+      open(model_dir / 'wall-catch-prob.pkl','rb') as wall):
+    normal_catch_prob = pkl.load(normal)
+    wall_catch_prob = pkl.load(wall)
 
 # IF out prob model
 with open(model_dir / 'out-prob.pkl','rb') as f: 
@@ -155,7 +157,15 @@ of_features = ['dist','hang_time',
                'wall_height','wall_height_hit',
                'hit_dist','wall_ball']
 X = of_play.select(of_features).collect().to_numpy()
-of_play = of_play.with_columns(out_prob = catch_prob.predict_proba(X)[:,-1])
+p = np.zeros(len(X))
+wall_ball_mask = X[:,-1]==1
+X_wall = X[ wall_ball_mask,:-1]
+X_norm = X[~wall_ball_mask,:6]
+p_wall = wall_catch_prob.predict_proba(X_wall)[:,-1]
+p_norm = normal_catch_prob.predict_proba(X_norm)[:,-1]
+p[ wall_ball_mask] = p_wall
+p[~wall_ball_mask] = p_norm
+of_play = of_play.with_columns(out_prob = p)
 df = df.join(of_play.select('play_id','out_prob'),on='play_id',how='left')
 
 # then do IF plays, IF plays are extremely fake right now the model sucks & they shouldnt be used
