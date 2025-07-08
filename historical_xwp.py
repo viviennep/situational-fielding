@@ -40,22 +40,25 @@ pred_outcome = outcome_given_hit.predict_proba(X)
 
 # do OF plays first
 of_play = df.filter(cl('is_of_play'))
-of_features = ['dist','hang_time',
+of_features = ['play_id',
+               'dist','hang_time',
                'sin_theta','cos_theta',
                'wall_dist_land','wall_min_dist',
                'wall_height','wall_height_hit',
                'hit_dist','wall_ball']
 X = of_play.select(of_features).collect().to_numpy()
+pids = X[:,0]
 p = np.zeros(len(X))
 wall_ball_mask = X[:,-1]==1
-X_wall = X[ wall_ball_mask,:-1]
-X_norm = X[~wall_ball_mask,:6]
+X_wall = X[ wall_ball_mask,1:-1]
+X_norm = X[~wall_ball_mask,1:7]
 p_wall = wall_catch_prob.predict_proba(X_wall)[:,-1]
 p_norm = normal_catch_prob.predict_proba(X_norm)[:,-1]
 p[ wall_ball_mask] = p_wall
 p[~wall_ball_mask] = p_norm
-of_play = of_play.with_columns(out_prob = p)
-df = df.join(of_play.select('play_id','out_prob'),on='play_id',how='left')
+#of_play = of_play.with_columns(out_prob = p)
+of_out_prob = pl.DataFrame({'play_id':pids,'out_prob':p}).lazy()
+df = df.join(of_out_prob,on='play_id',how='left')
 
 # then do IF plays
 if_features = ['if_fielding_alignment','stand','theta','launch_speed','launch_angle']

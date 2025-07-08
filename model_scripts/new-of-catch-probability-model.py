@@ -89,10 +89,10 @@ def create_objective(X,y,ipw,iterations=7000):
 study = optuna.create_study(direction='minimize',
                             sampler=optuna.samplers.TPESampler(),
                             pruner=optuna.pruners.HyperbandPruner())
-study.optimize(create_objective(X,y,ipw), n_trials=80)
+#study.optimize(create_objective(X,y,ipw), n_trials=80)
 
-best_params = study.best_trial.params
-best_n_boosted_rounds = study.best_trial.user_attrs['n_estimators']
+#best_params = study.best_trial.params
+#best_n_boosted_rounds = study.best_trial.user_attrs['n_estimators']
 
 #best_params = {
 #   'learning_rate'      : 0.01416207245436363,
@@ -120,7 +120,7 @@ normal_base_model = CatBoostClassifier(
     loss_function=loss_str,
     eval_metric=loss_str,
     langevin=True,
-    iterations=2100,
+    iterations=1100,
     monotone_constraints=[-1, 1, 0, 0, 0, 0],
 )
 
@@ -149,9 +149,9 @@ study = optuna.create_study(direction='minimize',
                             pruner=optuna.pruners.HyperbandPruner())
 obj = create_objective(X, y, np.ones_like(y))
 
-study.optimize(obj, n_trials=80)
+#study.optimize(obj, n_trials=80)
 
-best_params = study.best_trial.params
+#best_params = study.best_trial.params
 best_params = {
     'learning_rate': 0.012295594745733555, 
     'depth': 6, 
@@ -187,7 +187,7 @@ with open('../models/wall-catch-prob.pkl','wb') as f:
 '''
 
 pred = wall_catch_prob.predict_proba(X)[:,-1]
-#pred = normal_catch_prob.predict_proba(X)[:,-1]
+pred = normal_catch_prob.predict_proba(X)[:,-1]
 
 def calc_calib_curve(p,y,nbins=10):
     bins = np.linspace(0,1,nbins)[1:]
@@ -198,8 +198,8 @@ def calc_calib_curve(p,y,nbins=10):
 
 f,ax = plt.subplots()
 ax.plot(*calc_calib_curve(pred,y))
-#ax.plot(*calc_calib_curve(normal_plays.select('catch_rate').to_numpy().squeeze(),y))
-ax.plot(*calc_calib_curve(wall_balls.select('catch_rate').to_numpy().squeeze(),y))
+#ax.plot(*calc_calib_curve(wall_balls.select('catch_rate').to_numpy().squeeze(),y))
+ax.plot(*calc_calib_curve(normal_plays.select('catch_rate').to_numpy().squeeze(),y))
 ax.plot([0,1],[0,1],c='crimson',ls='-',lw=1,zorder=-1)
 ax.set_aspect('equal')
 plt.show()
